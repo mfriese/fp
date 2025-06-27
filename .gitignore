@@ -1,4 +1,4 @@
-/Fp.Api/bin
-/Fp.Api/obj
-/Fp.Api/.vs
-/Fp.Api/*.user
+bin
+obj
+.vs
+*.user

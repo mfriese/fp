@@ -38,3 +38,5 @@ if (app.Environment.IsDevelopment())
 app.MapTodoEndpoints();
 
 app.Run();
+
+public partial class Program { }

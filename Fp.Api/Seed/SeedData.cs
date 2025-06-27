@@ -7,12 +7,12 @@ public static class SeedData
 {
     public static void Initialize(TodoDbContext context)
     {
-        if (context.Todos.Any())
+        if (context.Set<TodoModel>().Any())
         {
             return; // DB has been seeded
         }
 
-        context.Todos.AddRange(
+        context.Set<TodoModel>().AddRange(
             new TodoModel
             {
                 Header = "Todo 1",

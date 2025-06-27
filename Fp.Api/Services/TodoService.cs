@@ -28,10 +28,20 @@ public class TodoService : ITodoService
         return success;
     }
 
-    public async Task UpdateAsync(TodoModel model)
+    public async Task<bool> UpdateAsync(int id, TodoModel model)
     {
-        Repository.Update(model);
-        await UnitOfWork.SaveChangesAsync();
+        // TODO do not check if the model exists and just update it aka create a new one?
+
+        if (Repository.GetById(id) is not null)
+        {
+            model.Id = id;
+            Repository.Update(model);
+            await UnitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+
+        return false;
     }
 
     public IEnumerable<TodoModel> GetAll()

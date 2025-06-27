@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fp.Api.Persistence;
 
-public class TodoDbContext : DbContext, IUnitOfWork
+public class TodoDbContext(DbContextOptions<TodoDbContext> options) : DbContext(options), IUnitOfWork
 {
-    public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options) { }
-
-    public DbSet<TodoModel> Todos { get; set; }
-
     public Task SaveChangesAsync()
         => Task.FromResult(SaveChanges());
+
+    public DbSet<TodoModel> Todos { get; set; }
 }
