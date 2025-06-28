@@ -1,4 +1,4 @@
-﻿using Fp.Api.DTOs;
+﻿using Fp.Api.Models.DTO;
 
 namespace Fp.Api.Services;
 

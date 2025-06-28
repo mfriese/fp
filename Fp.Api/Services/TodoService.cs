@@ -1,5 +1,6 @@
-﻿using Fp.Api.DTOs;
-using Fp.Api.Models;
+﻿using Fp.Api.Models;
+using Fp.Api.Models.Db;
+using Fp.Api.Models.DTO;
 using Fp.Api.Persistence;
 
 namespace Fp.Api.Services;

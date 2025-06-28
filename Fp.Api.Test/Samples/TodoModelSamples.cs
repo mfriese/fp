@@ -1,4 +1,4 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.Models.Db;
 
 namespace Fp.Api.Test.Samples;
 public class TodoModelSamples

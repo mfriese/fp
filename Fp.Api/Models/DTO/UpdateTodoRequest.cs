@@ -1,4 +1,4 @@
-﻿namespace Fp.Api.DTOs;
+﻿namespace Fp.Api.Models.DTO;
 
 public class UpdateTodoRequest
 {

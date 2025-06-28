@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Fp.Api.Models;
+namespace Fp.Api.Models.Db;
 
 public class TodoModel
 {

@@ -1,6 +1,7 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.Models.Db;
+using Fp.Api.Models.DTO;
 
-namespace Fp.Api.DTOs;
+namespace Fp.Api.Models;
 
 public static class MappingExtensions
 {

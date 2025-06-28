@@ -1,4 +1,4 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.Models.Db;
 using Fp.Api.Persistence;
 using Fp.Api.Services;
 using Fp.Api.Test.Samples;

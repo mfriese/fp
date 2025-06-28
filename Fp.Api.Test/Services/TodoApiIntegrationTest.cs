@@ -2,7 +2,7 @@
 
 namespace Fp.Api.Test.Services;
 
-public class TodoServiceIntegrationTest(WebApplicationFactory<Program> factory) :
+public class TodoApiIntegrationTest(WebApplicationFactory<Program> factory) :
     IClassFixture<WebApplicationFactory<Program>>
 {
     private WebApplicationFactory<Program> Factory { get; } = factory;

@@ -1,5 +1,5 @@
-﻿using Fp.Api.DTOs;
-using Fp.Api.Endpoints.TodoHandlers;
+﻿using Fp.Api.Endpoints.TodoHandlers;
+using Fp.Api.Models.DTO;
 
 namespace Fp.Api.Endpoints;
 

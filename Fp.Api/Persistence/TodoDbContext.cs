@@ -1,4 +1,4 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.Models.Db;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fp.Api.Persistence;

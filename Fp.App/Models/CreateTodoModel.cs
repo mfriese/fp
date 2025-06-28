@@ -1,6 +1,6 @@
-﻿namespace Fp.Api.DTOs;
+﻿namespace Fp.App.Models;
 
-public class CreateTodoRequest
+public class CreateTodoModel
 {
     public required string Header { get; set; }
     public required string Description { get; set; }

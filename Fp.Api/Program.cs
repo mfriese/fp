@@ -1,5 +1,5 @@
 using Fp.Api.Endpoints;
-using Fp.Api.Models;
+using Fp.Api.Models.Db;
 using Fp.Api.Persistence;
 using Fp.Api.Seed;
 using Fp.Api.Services;

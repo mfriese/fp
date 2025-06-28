@@ -1,4 +1,4 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.Models.Db;
 using Fp.Api.Persistence;
 
 namespace Fp.Api.Seed;
