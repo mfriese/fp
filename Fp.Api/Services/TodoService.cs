@@ -1,24 +1,25 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.DTOs;
+using Fp.Api.Models;
 using Fp.Api.Persistence;
 
 namespace Fp.Api.Services;
 
-public class TodoService : ITodoService
+public class TodoService(
+    IRepository<TodoModel> repository,
+    IUnitOfWork unitOfWork) : ITodoService
 {
-    private IRepository<TodoModel> Repository { get; }
-    private IUnitOfWork UnitOfWork { get; }
-    public TodoService(
-        IRepository<TodoModel> repository,
-        IUnitOfWork unitOfWork)
-    {
-        Repository = repository;
-        UnitOfWork = unitOfWork;
-    }
+    private IRepository<TodoModel> Repository { get; } = repository;
+    private IUnitOfWork UnitOfWork { get; } = unitOfWork;
 
-    public async Task CreateAsync(TodoModel model)
+    public async Task<TodoResponse> CreateAsync(CreateTodoRequest request)
     {
+        var model = request.ToModel();
+
         Repository.Add(model);
+
         await UnitOfWork.SaveChangesAsync();
+
+        return model.ToResponse();
     }
 
     public async Task<bool> DeleteAsync(int id)
@@ -28,25 +29,23 @@ public class TodoService : ITodoService
         return success;
     }
 
-    public async Task<bool> UpdateAsync(int id, TodoModel model)
+    public async Task<bool> UpdateAsync(int id, UpdateTodoRequest request)
     {
-        // TODO do not check if the model exists and just update it aka create a new one?
+        var dbModel = Repository.GetById(id);
 
-        if (Repository.GetById(id) is not null)
-        {
-            model.Id = id;
-            Repository.Update(model);
-            await UnitOfWork.SaveChangesAsync();
+        if (dbModel is null)
+            return false;
 
-            return true;
-        }
+        dbModel.Patch(request);
 
-        return false;
+        await UnitOfWork.SaveChangesAsync();
+
+        return true;
     }
 
-    public IEnumerable<TodoModel> GetAll()
-        => Repository.Get().AsEnumerable();
+    public IEnumerable<TodoResponse> GetAll()
+        => Repository.Get().Select(mm => mm.ToResponse()).AsEnumerable();
 
-    public TodoModel? GetById(int id)
-        => Repository.GetById(id);
+    public TodoResponse? GetById(int id)
+        => Repository.GetById(id)?.ToResponse();
 }

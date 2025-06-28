@@ -22,9 +22,15 @@ public class TodoServiceUnitTest
 
         var service = new TodoService(repo.Object, uow.Object);
 
-        var result = await service.UpdateAsync(42, sample);
+        var result = await service.UpdateAsync(42, new()
+        {
+            IsCompleted = true,
+            Title = "my new title",
+            Description = "my new description"
+        });
 
         Assert.False(result);
+        uow.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
     [Fact]
@@ -36,15 +42,19 @@ public class TodoServiceUnitTest
         repo.Setup(r => r.
             GetById(It.Is<int>(ii => ii == sample.Id))).
             Returns(sample);
-        repo.Setup(r => r.
-            Update(It.Is<TodoModel>(m => m.Id == sample.Id)));
 
         var uow = new Mock<IUnitOfWork>();
 
         var service = new TodoService(repo.Object, uow.Object);
 
-        var result = await service.UpdateAsync(sample.Id, sample);
+        var result = await service.UpdateAsync(sample.Id, new()
+        {
+            IsCompleted = true,
+            Title = "my new title",
+            Description = "my new description"
+        });
 
         Assert.True(result);
+        uow.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 }

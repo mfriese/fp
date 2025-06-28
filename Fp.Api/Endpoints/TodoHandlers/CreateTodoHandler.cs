@@ -1,4 +1,4 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.DTOs;
 using Fp.Api.Services;
 
 namespace Fp.Api.Endpoints.TodoHandlers;
@@ -7,28 +7,15 @@ public class CreateTodoHandler
 {
     public static async Task<IResult> HandleAsync(
         ITodoService service,
-        Request request)
+        CreateTodoRequest request)
     {
         if (request is null)
         {
             return Results.BadRequest("item cannot be null.");
         }
 
-        var newModel = new TodoModel()
-        {
-            Header = request.Header,
-            Description = request.Description
-        };
+        var result = await service.CreateAsync(request);
 
-        await service.CreateAsync(newModel);
-
-        return Results.Created($"/todos/{newModel.Id}", newModel);
+        return Results.Created($"/todos/{result.Id}", result);
     }
-
-    public record Request(
-        string Header,
-        string Description);
-
-    public record Response(
-        int Id);
 }

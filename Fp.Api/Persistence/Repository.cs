@@ -27,7 +27,4 @@ public class Repository<TModel>(TodoDbContext context) : IRepository<TModel>
 
         return false;
     }
-
-    public void Update(TModel entity)
-        => DbContext.Set<TModel>().Update(entity);
 }

@@ -4,9 +4,7 @@ namespace Fp.Api.Endpoints.TodoHandlers;
 
 public class DeleteTodoHandler
 {
-    public static async Task<IResult> HandleAsync(
-        ITodoService service,
-        int id)
+    public static async Task<IResult> HandleAsync(ITodoService service, int id)
     {
         if (await service.DeleteAsync(id))
         {

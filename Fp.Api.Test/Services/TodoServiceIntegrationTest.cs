@@ -24,7 +24,7 @@ public class TodoServiceIntegrationTest(WebApplicationFactory<Program> factory) 
     [InlineData("/todo/1")]
     [InlineData("/todo/2")]
     [InlineData("/todo/3")]
-    public async Task DeleteTodos_ExpectedSuccess(string endpoint)
+    public async Task DeleteTodos_ReturnsOk(string endpoint)
     {
         var client = Factory.CreateClient();
 

@@ -6,5 +6,4 @@ public interface IRepository<TModel> where TModel : class
     IQueryable<TModel> Get();
     void Add(TModel entity);
     bool Remove(int id);
-    void Update(TModel entity);
 }

@@ -1,4 +1,4 @@
-﻿using Fp.Api.Models;
+﻿using Fp.Api.DTOs;
 using Fp.Api.Services;
 
 namespace Fp.Api.Endpoints.TodoHandlers;
@@ -7,7 +7,7 @@ public class UpdateTodoHandler
 {
     public static async Task<IResult> HandleAsync(
         ITodoService service,
-        Request request,
+        UpdateTodoRequest request,
         int id)
     {
         if (request is null)
@@ -15,18 +15,13 @@ public class UpdateTodoHandler
             return Results.BadRequest("item cannot be null.");
         }
 
-        await service.UpdateAsync(id, new TodoModel()
+        var success = await service.UpdateAsync(id, request);
+
+        if (!success)
         {
-            IsCompleted = request.IsCompleted,
-            Header = request.Header,
-            Description = request.Description
-        });
+            return Results.NotFound($"Item with Id '{id}' could not be updated.");
+        }
 
         return Results.Ok();
     }
-
-    public record Request(
-        bool IsCompleted,
-        string Header,
-        string Description);
 }

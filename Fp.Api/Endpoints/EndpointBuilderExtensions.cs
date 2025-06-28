@@ -1,4 +1,5 @@
-﻿using Fp.Api.Endpoints.TodoHandlers;
+﻿using Fp.Api.DTOs;
+using Fp.Api.Endpoints.TodoHandlers;
 
 namespace Fp.Api.Endpoints;
 
@@ -8,11 +9,11 @@ public static class EndpointBuilderExtensions
     {
         builder.
             MapGet("/todo", GetTodoHandler.Handle).
-            Produces<IEnumerable<GetTodoHandler.Response>>(StatusCodes.Status200OK);
+            Produces<IEnumerable<TodoResponse>>(StatusCodes.Status200OK);
 
         builder.
             MapPost("/todo", CreateTodoHandler.HandleAsync).
-            Produces<CreateTodoHandler.Response>(StatusCodes.Status201Created);
+            Produces<TodoResponse>(StatusCodes.Status201Created);
 
         builder.
             MapDelete("/todo/{id}", DeleteTodoHandler.HandleAsync).
@@ -21,7 +22,8 @@ public static class EndpointBuilderExtensions
 
         builder.
             MapPatch("/todo/{id}", UpdateTodoHandler.HandleAsync).
-            Produces(StatusCodes.Status200OK);
+            Produces(StatusCodes.Status200OK).
+            Produces<string>(StatusCodes.Status404NotFound);
 
         return builder;
     }
