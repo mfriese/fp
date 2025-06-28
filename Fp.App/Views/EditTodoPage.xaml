@@ -2,18 +2,90 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:favm="clr-namespace:Fp.App.ViewModels"
     x:Class="Fp.App.Views.EditTodoPage"
-    Title="EditTodoPage">
-    <VerticalStackLayout>
-        <Label
-            Text="Id"
-            Margin="4"
-            FontSize="Medium"
-            HorizontalOptions="Start" />
-        <Label
-            Text="{Binding Todo.Id}"
-            Margin="4"
-            FontSize="Medium"
-            HorizontalOptions="Start" />
-    </VerticalStackLayout>
+    x:DataType="favm:EditTodoViewModel"
+    Title="Edit Todo Item">
+    <Grid
+        RowDefinitions="Auto, Auto, Auto, Auto, *, Auto"
+        Margin="16,0">
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="*, *">
+            <Label
+                Grid.Column="0"
+                Text="Id"
+                Margin="4"
+                FontSize="Medium"
+                FontAttributes="Bold"
+                HorizontalOptions="Start"
+                VerticalOptions="Center" />
+            <Label
+                Grid.Column="1"
+                Text="{Binding Model.Id}"
+                Margin="4"
+                FontSize="Medium"
+                HorizontalOptions="Start" />
+        </Grid>
+        <Grid
+            Grid.Row="1"
+            ColumnDefinitions="*, *">
+            <Label
+                Grid.Column="0"
+                Text="Title"
+                Margin="4"
+                FontSize="Medium"
+                FontAttributes="Bold"
+                HorizontalOptions="Start"
+                VerticalOptions="Center" />
+            <Entry
+                Grid.Column="1"
+                Text="{Binding Model.Header}"
+                Margin="4"
+                FontSize="Medium"
+                BackgroundColor="LightGray"
+                HorizontalOptions="Fill" />
+        </Grid>
+        <Grid
+            Grid.Row="2"
+            ColumnDefinitions="*, *">
+            <Label
+                Grid.Column="0"
+                Text="Description"
+                Margin="4"
+                FontSize="Medium"
+                FontAttributes="Bold"
+                HorizontalOptions="Start"
+                VerticalOptions="Center" />
+            <Entry
+                Grid.Column="1"
+                Text="{Binding Model.Description}"
+                Margin="4"
+                FontSize="Medium"
+                BackgroundColor="LightGray"
+                HorizontalOptions="Fill" />
+        </Grid>
+        <Grid
+            Grid.Row="3"
+            ColumnDefinitions="*, *">
+            <Label
+                Grid.Column="0"
+                Text="Completed"
+                Margin="4"
+                FontSize="Medium"
+                FontAttributes="Bold"
+                HorizontalOptions="Start"
+                VerticalOptions="Center" />
+            <CheckBox
+                Grid.Column="1"
+                IsChecked="{Binding Model.IsCompleted}"
+                HorizontalOptions="Start" />
+        </Grid>
+        <Button
+            Grid.Row="5"
+            Margin="16"
+            Text="Save"
+            Command="{Binding SaveCommand}"
+            HorizontalOptions="Center" />
+    </Grid>
 </ContentPage>

@@ -13,11 +13,11 @@ public interface ITodoApi
         [Body] CreateTodoModel request);
 
     [Delete("/todo/{id}")]
-    Task<ApiResponse<object>> DeleteTodoAsync(
+    Task<ApiResponse<HttpContent>> DeleteTodoAsync(
         int id);
 
     [Patch("/todo/{id}")]
-    Task<ApiResponse<object>> UpdateTodoAsync(
+    Task<ApiResponse<HttpContent>> UpdateTodoAsync(
         int id,
         [Body] UpdateTodoModel request);
 }
