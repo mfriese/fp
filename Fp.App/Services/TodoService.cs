@@ -36,6 +36,16 @@ public class TodoService(ITodoApi api) : ITodoService
             return result.Content!;
         });
 
+    public IObservable<TodoModel> GetTodo(int id)
+        => Observable.FromAsync(async () =>
+        {
+            var result = await Api.GetTodoAsync(id);
+            await result.EnsureSuccessfulAsync();
+
+            // Checked above, should never be null
+            return result.Content!;
+        });
+
     public IObservable<bool> UpdateTodo(int id, UpdateTodoModel request)
         => Observable.FromAsync(async () =>
         {

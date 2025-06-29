@@ -10,11 +10,6 @@ public class UpdateTodoHandler
         UpdateTodoRequest request,
         int id)
     {
-        if (request is null)
-        {
-            return Results.BadRequest("item cannot be null.");
-        }
-
         var success = await service.UpdateAsync(id, request);
 
         if (!success)

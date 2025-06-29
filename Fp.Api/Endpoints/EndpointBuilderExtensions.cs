@@ -8,8 +8,13 @@ public static class EndpointBuilderExtensions
     public static IEndpointRouteBuilder MapTodoEndpoints(this IEndpointRouteBuilder builder)
     {
         builder.
-            MapGet("/todo", GetTodoHandler.Handle).
+            MapGet("/todo", GetAllTodoHandler.Handle).
             Produces<IEnumerable<TodoResponse>>(StatusCodes.Status200OK);
+
+        builder.
+            MapGet("/todo/{id}", GetTodoHandler.Handle).
+            Produces<IEnumerable<TodoResponse>>(StatusCodes.Status200OK).
+            Produces<string>(StatusCodes.Status404NotFound);
 
         builder.
             MapPost("/todo", CreateTodoHandler.HandleAsync).

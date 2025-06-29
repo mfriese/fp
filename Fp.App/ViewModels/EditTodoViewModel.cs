@@ -19,35 +19,70 @@ public partial class EditTodoViewModel(ITodoService todoService) : BaseViewModel
 
     public void OnAppearing()
     {
-        TodoService
-            .GetTodos()
-            .Subscribe(
-                items => Model = items.FirstOrDefault(ii => ii.Id == Id),
-                error => MainThread.BeginInvokeOnMainThread(() =>
-                    Toast.Make(error.Message).Show()));
+        if (Id == 0)
+        {
+            // Creating a new item
+            Model = new TodoModel
+            {
+                Id = 0,
+                Header = string.Empty,
+                Description = string.Empty,
+                IsCompleted = false
+            };
+        }
+        else
+        {
+            TodoService
+                .GetTodo(Id)
+                .Subscribe(
+                    item => Model = item,
+                    error => _ = Toast.Make(error.Message).Show());
+        }
     }
 
     [RelayCommand]
     private void Save()
     {
         if (Model is null)
-        {
-            _ = Toast.Make("Cannot send null object").Show();
-
             return;
-        }
 
+        if (Id != 0)
+        {
+            UpdateExisting(Model);
+        }
+        else
+        {
+            CreateNew(Model);
+        }
+    }
+
+    private void UpdateExisting(TodoModel model)
+    {
         var updateRequest = new UpdateTodoModel()
         {
-            Title = Model.Header,
-            Description = Model.Description,
-            IsCompleted = Model.IsCompleted
+            Title = model.Header,
+            Description = model.Description,
+            IsCompleted = model.IsCompleted
         };
 
         TodoService
-            .UpdateTodo(Model.Id, updateRequest)
+            .UpdateTodo(model.Id, updateRequest)
             .Subscribe(
-                success => NotifyAndExit(success, Model.Id));
+                success => NotifyAndExit(success, model.Id));
+    }
+
+    private void CreateNew(TodoModel model)
+    {
+        var createRequest = new CreateTodoModel()
+        {
+            Header = model.Header,
+            Description = model.Description
+        };
+
+        TodoService
+            .CreateTodo(createRequest)
+            .Subscribe(
+                item => NotifyAndExit(item is not null, item?.Id ?? 0));
     }
 
     private static void NotifyAndExit(bool success, int id)
