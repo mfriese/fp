@@ -19,41 +19,25 @@ public partial class EditTodoViewModel(ITodoService todoService) : BaseViewModel
 
     public void OnAppearing()
     {
-        if (Id == 0)
-        {
-            // Creating a new item
-            Model = new TodoModel
-            {
-                Id = 0,
-                Header = string.Empty,
-                Description = string.Empty,
-                IsCompleted = false
-            };
-        }
-        else
-        {
-            TodoService
-                .GetTodo(Id)
-                .Subscribe(
-                    item => Model = item,
-                    error => _ = Toast.Make(error.Message).Show());
-        }
+        TodoService
+            .GetTodo(Id)
+            .Subscribe(
+                item => Model = item,
+                error => _ = Toast.Make(error.Message).Show());
     }
 
     [RelayCommand]
     private void Save()
     {
-        if (Model is null)
-            return;
-
-        if (Id != 0)
-        {
+        if (Model is not null)
             UpdateExisting(Model);
-        }
-        else
-        {
-            CreateNew(Model);
-        }
+    }
+
+    [RelayCommand]
+    private void Delete()
+    {
+        if (Model is not null)
+            DeleteExisting(Model);
     }
 
     private void UpdateExisting(TodoModel model)
@@ -67,35 +51,36 @@ public partial class EditTodoViewModel(ITodoService todoService) : BaseViewModel
 
         TodoService
             .UpdateTodo(model.Id, updateRequest)
-            .Subscribe(
-                success => NotifyAndExit(success, model.Id));
+            .Subscribe(success =>
+            {
+                if (success)
+                {
+                    WeakReferenceMessenger.Default.Send(new TodoItemChangedMessage(model.Id));
+                }
+                else
+                {
+                    _ = Toast.Make("Error sending data").Show();
+                }
+
+                Shell.Current.GoToAsync("..");
+            });
     }
 
-    private void CreateNew(TodoModel model)
+    private void DeleteExisting(TodoModel model)
     {
-        var createRequest = new CreateTodoModel()
-        {
-            Header = model.Header,
-            Description = model.Description
-        };
-
         TodoService
-            .CreateTodo(createRequest)
-            .Subscribe(
-                item => NotifyAndExit(item is not null, item?.Id ?? 0));
-    }
-
-    private static void NotifyAndExit(bool success, int id)
-    {
-        if (success)
-        {
-            WeakReferenceMessenger.Default.Send(new TodoItemChangedMessage(id));
-        }
-        else
-        {
-            _ = Toast.Make("Error sending data").Show();
-        }
-
-        Shell.Current.GoToAsync("..");
+            .DeleteTodo(model.Id)
+            .Subscribe(success =>
+            {
+                if (success)
+                {
+                    WeakReferenceMessenger.Default.Send(new TodoItemDeletedMessage(model.Id));
+                }
+                else
+                {
+                    _ = Toast.Make("Error deleting data").Show();
+                }
+                Shell.Current.GoToAsync("..");
+            });
     }
 }

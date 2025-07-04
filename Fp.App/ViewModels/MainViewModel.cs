@@ -5,6 +5,7 @@ using DynamicData.Binding;
 using Fp.App.Messages;
 using Fp.App.Models;
 using Fp.App.Services;
+using System.Reactive.Linq;
 
 namespace Fp.App.ViewModels;
 
@@ -17,6 +18,12 @@ public partial class MainViewModel : BaseViewModel
     public MainViewModel(ITodoService todoService)
     {
         TodoService = todoService;
+
+        TodoService.
+            GetTodos().
+            Subscribe(
+                items => _sourceList.AddRange(items),
+                error => Toast.Make(error.Message).Show());
 
         _sourceList
             .Connect()
@@ -39,18 +46,8 @@ public partial class MainViewModel : BaseViewModel
             .Subscribe();
 
         WeakReferenceMessenger.Default.Register<TodoItemChangedMessage>(this, OnItemChanged);
-    }
-
-    public void OnAppearing()
-    {
-        if (_sourceList.Count == 0)
-        {
-            TodoService.
-                GetTodos().
-                Subscribe(
-                    items => _sourceList.AddRange(items),
-                    error => Toast.Make(error.Message).Show());
-        }
+        WeakReferenceMessenger.Default.Register<TodoItemCreatedMessage>(this, OnItemCreated);
+        WeakReferenceMessenger.Default.Register<TodoItemDeletedMessage>(this, OnItemDeleted);
     }
 
     [ObservableProperty]
@@ -71,13 +68,13 @@ public partial class MainViewModel : BaseViewModel
 
     [RelayCommand]
     private async Task CreateTodo()
-        => await Shell.Current.GoToAsync($"{nameof(EditTodoPage)}?Id={0}");
+        => await Shell.Current.GoToAsync(nameof(CreateTodoPage));
 
     [RelayCommand]
     private async Task EditTodo(TodoModel model)
         => await Shell.Current.GoToAsync($"{nameof(EditTodoPage)}?Id={model.Id}");
 
-    private void OnItemChanged(object s, TodoItemChangedMessage m)
+    private void OnItemChanged(object _, TodoItemChangedMessage m)
     {
         TodoService.GetTodo(m.Value).Subscribe(item =>
         {
@@ -94,6 +91,24 @@ public partial class MainViewModel : BaseViewModel
         {
             Toast.Make(error.Message).Show();
         });
+    }
+
+    private void OnItemCreated(object _, TodoItemCreatedMessage m)
+    {
+        TodoService.GetTodo(m.Value).Subscribe(
+            item => _sourceList.Add(item),
+            error => Toast.Make(error.Message).Show()
+        );
+    }
+
+    private void OnItemDeleted(object _, TodoItemDeletedMessage m)
+    {
+        var existingItem = _sourceList.Items.FirstOrDefault(t => t.Id == m.Value);
+
+        if (existingItem is not null)
+        {
+            _sourceList.Remove(existingItem);
+        }
     }
 
     public enum StateOption
