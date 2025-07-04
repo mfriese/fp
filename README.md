@@ -70,22 +70,32 @@ Fp.Api.Test/         => Integration- & Unittests
 Das Backend ist als Minimal API im Projekt `Fp.Api` integriert. **Hinweis**: Im
 Android-Emulator kann das Backend nur über `http://10.0.2.2:5000` erreicht werden.
 
-**Ausführen über Visual Studio:**
+**Ausführen (aus Visual Studio):**
 
-Option 1) Debug start aus Visual Studio heraus auf Emulator:
+In der App gibt es zwei separate Config Dateien. Die **Debug** Config ist für lokales
+Starten mit Emulator gedacht. Die **Release** Config ist für Start auf einem Smartphone
+gedacht, hier muss die IP der Computers eingetrasgen werden auf dem das Backend läuft.
+
+Option 1) Debug start aus Visual Studio heraus auf **Emulator**:
 
 * Solution Fp.Api.sln in Visual Studio öffnen
 * Konfiguration: **Debug**.
-* Geräteauswahl: Einen Android Emulator auswählen.
-* Projekte `Fp.Api` und `Fp.App` werden in der Config `Debug` *beide* gestartet
-* Backend läuft auf: `https://localhost:5001` oder `http://localhost:5000`
+* Geräteauswahl: Einen Android Emulator auswählen (Start Dropdown > Android Emulators).
+* Backend läuft auf: `http://localhost:5000`
 * App versucht auf `http://10.0.2.2:5000` zuzugriefen, hier läuft das Backend.
+* **Start** klicken
 
 Option 2) Release start aus Visual Studio heraus auf echtem Gerät:
 
 * Solution Fp.Api.sln in Visual Studio öffnen
 * Konfiguration: **Release**.
-* [TODO]
+* Geräteauswahl: Einen Lokales Gerät auswählen (Start Dropdown > Android Local Devices).
+* Backend läuft auf: `http://localhost:5000`
+* Datei `settings.Release.json` so anpassen, dass die IP des Computers, auf dem das
+  Backend gestartet wird eintragen. Z.B. per `ipconfig` aus der Kommandozeile abfragen
+  und die IP des lokalen Netzwerkgeräts identifizieren. Die IP aus der json entsprechend
+  ersetzen.
+* App versucht auf `http://10.0.2.2:5000` zuzugriefen, hier läuft das Backend.
 
 ### API-Dokumentation
 
