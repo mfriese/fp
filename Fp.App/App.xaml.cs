@@ -1,14 +1,18 @@
-﻿namespace Fp.App;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+
+namespace Fp.App;
 
 public partial class App : Application
 {
-	public App()
-	{
-		InitializeComponent();
-	}
+    public App(IServiceProvider services)
+    {
+        InitializeComponent();
 
-	protected override Window CreateWindow(IActivationState? activationState)
-	{
-		return new Window(new AppShell());
-	}
+        Ioc.Default.ConfigureServices(services);
+    }
+
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
+    }
 }

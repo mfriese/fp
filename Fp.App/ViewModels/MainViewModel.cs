@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
+using DynamicData.Binding;
 using Fp.App.Messages;
 using Fp.App.Models;
 using Fp.App.Services;
@@ -10,26 +12,62 @@ public partial class MainViewModel : BaseViewModel
 {
     public ITodoService TodoService { get; }
 
+    private readonly SourceList<TodoModel> _sourceList = new();
+
     public MainViewModel(ITodoService todoService)
     {
         TodoService = todoService;
-        Todos = [];
+
+        _sourceList
+            .Connect()
+            .AutoRefreshOnObservable(_ => this
+                .WhenAnyPropertyChanged
+                (
+                    nameof(StateFilter),
+                    nameof(TitleFilter)
+                )
+            )
+            .Filter(model => StateFilter switch
+            {
+                StateOption.Completed => model.IsCompleted,
+                StateOption.NotCompleted => !model.IsCompleted,
+                _ => true
+            })
+            .Filter(model => model.Header.Contains(TitleFilter))
+            .Sort(SortExpressionComparer<TodoModel>.Ascending(x => x.Id))
+            .Bind(out todos)
+            .Subscribe();
 
         WeakReferenceMessenger.Default.Register<TodoItemChangedMessage>(this, OnItemChanged);
     }
 
     public void OnAppearing()
     {
-        TodoService.
-            GetTodos().
-            Subscribe(
-                items => Todos = new(items),
-                error => MainThread.BeginInvokeOnMainThread(()
-                    => Toast.Make(error.Message).Show()));
+        if (_sourceList.Count == 0)
+        {
+            TodoService.
+                GetTodos().
+                Subscribe(
+                    items => _sourceList.AddRange(items),
+                    error => Toast.Make(error.Message).Show());
+        }
     }
 
     [ObservableProperty]
-    private ObservableCollection<TodoModel> todos;
+    private ReadOnlyObservableCollection<TodoModel> todos;
+
+    [ObservableProperty]
+    private StateOption stateFilter = StateOption.All;
+
+    [ObservableProperty]
+    private string titleFilter = string.Empty;
+
+    public StateOption[] StateOptions =>
+    [
+        StateOption.All,
+        StateOption.Completed,
+        StateOption.NotCompleted
+    ];
 
     [RelayCommand]
     private async Task CreateTodo()
@@ -43,15 +81,25 @@ public partial class MainViewModel : BaseViewModel
     {
         TodoService.GetTodo(m.Value).Subscribe(item =>
         {
-            var existingItem = Todos.FirstOrDefault(t => t.Id == item.Id);
+            var existingItem = _sourceList.Items.FirstOrDefault(t => t.Id == item.Id);
+
             if (existingItem is not null)
             {
-                Todos.Remove(existingItem);
+                _sourceList.Remove(existingItem);
             }
-            Todos.Add(item);
+
+            _sourceList.Add(item);
+
         }, error =>
         {
-            MainThread.BeginInvokeOnMainThread(() => Toast.Make(error.Message).Show());
+            Toast.Make(error.Message).Show();
         });
+    }
+
+    public enum StateOption
+    {
+        All,
+        Completed,
+        NotCompleted
     }
 }

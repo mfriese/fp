@@ -1,10 +1,16 @@
 using Fp.Api.Endpoints;
 using Fp.Api.Models.Db;
 using Fp.Api.Persistence;
-using Fp.Api.Seed;
 using Fp.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,20 +21,23 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<TodoDbContext>(options
     => options.UseInMemoryDatabase("todoDb"));
 
-builder.Services.AddScoped<IUnitOfWork>(provider
+builder.Services.AddTransient<IUnitOfWork>(provider
     => provider.GetRequiredService<TodoDbContext>());
 
 builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<IRepository<TodoModel>, Repository<TodoModel>>();
 
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    SeedData.Initialize(scope.ServiceProvider.GetRequiredService<TodoDbContext>());
+    // Seed some data for testing ...
+    // SeedData.Initialize(scope.ServiceProvider.GetRequiredService<TodoDbContext>());
 }
 
-// Configure the HTTP request pipeline.
+// Provide api decumentation when in development.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -39,4 +48,5 @@ app.MapTodoEndpoints();
 
 app.Run();
 
+// Need class handle from testing project
 public partial class Program { }

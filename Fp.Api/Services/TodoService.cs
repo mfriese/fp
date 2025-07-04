@@ -7,46 +7,71 @@ namespace Fp.Api.Services;
 
 public class TodoService(
     IRepository<TodoModel> repository,
+    ILogger<TodoService> logger,
     IUnitOfWork unitOfWork) : ITodoService
 {
     private IRepository<TodoModel> Repository { get; } = repository;
     private IUnitOfWork UnitOfWork { get; } = unitOfWork;
+    private ILogger<TodoService> Logger { get; } = logger;
 
-    public async Task<TodoResponse> CreateAsync(CreateTodoRequest request)
+    public TodoResponse Create(CreateTodoRequest request)
     {
+        Logger.LogDebug("Creating a todo item with header: {Header}", request.Header);
+
         var model = request.ToModel();
 
         Repository.Add(model);
 
-        await UnitOfWork.SaveChangesAsync();
+        UnitOfWork.SaveAll();
+
+        Logger.LogInformation("New todo item created with ID: {Id}", model.Id);
 
         return model.ToResponse();
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public bool Delete(int id)
     {
+        Logger.LogDebug("Deleting a todo item with id: {@Id}", id);
+
         var success = Repository.Remove(id);
-        await UnitOfWork.SaveChangesAsync();
+        UnitOfWork.SaveAll();
+
+        Logger.LogInformation("Todo item with ID: {Id} deleted: {success}", id, success);
+
         return success;
     }
 
-    public async Task<bool> UpdateAsync(int id, UpdateTodoRequest request)
+    public bool Update(int id, UpdateTodoRequest request)
     {
+        Logger.LogDebug("Updating a todo item with id: {@Id}", id);
+
         var dbModel = Repository.GetById(id);
 
         if (dbModel is null)
             return false;
 
+        Logger.LogDebug("Found todo item with id: {@Id}, updating...", id);
+
         dbModel.Patch(request);
 
-        await UnitOfWork.SaveChangesAsync();
+        UnitOfWork.SaveAll();
+
+        Logger.LogInformation("Todo item with ID: {Id} updated successfully", id);
 
         return true;
     }
 
     public IEnumerable<TodoResponse> GetAll()
-        => Repository.Get().Select(mm => mm.ToResponse()).AsEnumerable();
+    {
+        Logger.LogInformation("Retrieving all todo items");
+
+        return Repository.Get().Select(mm => mm.ToResponse()).AsEnumerable();
+    }
 
     public TodoResponse? GetById(int id)
-        => Repository.GetById(id)?.ToResponse();
+    {
+        Logger.LogInformation("Retrieving todo item with id: {@Id}", id);
+
+        return Repository.GetById(id)?.ToResponse();
+    }
 }

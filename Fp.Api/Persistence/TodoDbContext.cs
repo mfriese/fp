@@ -5,8 +5,8 @@ namespace Fp.Api.Persistence;
 
 public class TodoDbContext(DbContextOptions<TodoDbContext> options) : DbContext(options), IUnitOfWork
 {
-    public Task SaveChangesAsync()
-        => Task.FromResult(SaveChanges());
+    public void SaveAll()
+        => SaveChanges();
 
     public DbSet<TodoModel> Todos { get; set; }
 }

@@ -43,7 +43,6 @@
                 Text="{Binding Model.Header}"
                 Margin="4"
                 FontSize="Medium"
-                BackgroundColor="LightGray"
                 HorizontalOptions="Fill" />
         </Grid>
         <Grid
@@ -62,7 +61,6 @@
                 Text="{Binding Model.Description}"
                 Margin="4"
                 FontSize="Medium"
-                BackgroundColor="LightGray"
                 HorizontalOptions="Fill" />
         </Grid>
         <Grid

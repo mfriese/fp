@@ -5,17 +5,24 @@ namespace Fp.Api.Endpoints.TodoHandlers;
 
 public class UpdateTodoHandler
 {
-    public static async Task<IResult> HandleAsync(
+    public static IResult Handle(
+        int id,
         ITodoService service,
         UpdateTodoRequest request,
-        int id)
+        ILogger<UpdateTodoHandler> logger)
     {
-        var success = await service.UpdateAsync(id, request);
+        logger.LogDebug("Updating todo with Id '{Id}'", id);
+
+        var success = service.Update(id, request);
 
         if (!success)
         {
+            logger.LogWarning("Failed to update todo with Id '{Id}'", id);
+
             return Results.NotFound($"Item with Id '{id}' could not be updated.");
         }
+
+        logger.LogInformation("Todo with Id '{Id}' updated successfully", id);
 
         return Results.Ok();
     }

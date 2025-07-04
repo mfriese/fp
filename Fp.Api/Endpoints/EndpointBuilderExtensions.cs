@@ -17,16 +17,16 @@ public static class EndpointBuilderExtensions
             Produces<string>(StatusCodes.Status404NotFound);
 
         builder.
-            MapPost("/todo", CreateTodoHandler.HandleAsync).
+            MapPost("/todo", CreateTodoHandler.Handle).
             Produces<TodoResponse>(StatusCodes.Status201Created);
 
         builder.
-            MapDelete("/todo/{id}", DeleteTodoHandler.HandleAsync).
+            MapDelete("/todo/{id}", DeleteTodoHandler.Handle).
             Produces(StatusCodes.Status200OK).
             Produces<string>(StatusCodes.Status404NotFound);
 
         builder.
-            MapPatch("/todo/{id}", UpdateTodoHandler.HandleAsync).
+            MapPatch("/todo/{id}", UpdateTodoHandler.Handle).
             Produces(StatusCodes.Status200OK).
             Produces<string>(StatusCodes.Status404NotFound);
 

@@ -2,6 +2,7 @@
 using Fp.Api.Persistence;
 using Fp.Api.Services;
 using Fp.Api.Test.Samples;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace Fp.Api.Test.Services;
@@ -9,7 +10,7 @@ namespace Fp.Api.Test.Services;
 public class TodoServiceUnitTest
 {
     [Fact]
-    public async Task Update_ModelDoesNotExist()
+    public void Update_ModelDoesNotExist()
     {
         var sample = TodoModelSamples.Todos[0];
 
@@ -19,10 +20,11 @@ public class TodoServiceUnitTest
             Returns((TodoModel?)null);
 
         var uow = new Mock<IUnitOfWork>();
+        var log = NullLogger<TodoService>.Instance;
 
-        var service = new TodoService(repo.Object, uow.Object);
+        var service = new TodoService(repo.Object, log, uow.Object);
 
-        var result = await service.UpdateAsync(42, new()
+        var result = service.Update(42, new()
         {
             IsCompleted = true,
             Title = "my new title",
@@ -30,11 +32,11 @@ public class TodoServiceUnitTest
         });
 
         Assert.False(result);
-        uow.Verify(u => u.SaveChangesAsync(), Times.Never);
+        uow.Verify(u => u.SaveAll(), Times.Never);
     }
 
     [Fact]
-    public async Task Update_ModelDoesExist()
+    public void Update_ModelDoesExist()
     {
         var sample = TodoModelSamples.Todos[0];
 
@@ -44,10 +46,11 @@ public class TodoServiceUnitTest
             Returns(sample);
 
         var uow = new Mock<IUnitOfWork>();
+        var log = NullLogger<TodoService>.Instance;
 
-        var service = new TodoService(repo.Object, uow.Object);
+        var service = new TodoService(repo.Object, log, uow.Object);
 
-        var result = await service.UpdateAsync(sample.Id, new()
+        var result = service.Update(sample.Id, new()
         {
             IsCompleted = true,
             Title = "my new title",
@@ -55,6 +58,6 @@ public class TodoServiceUnitTest
         });
 
         Assert.True(result);
-        uow.Verify(u => u.SaveChangesAsync(), Times.Once);
+        uow.Verify(u => u.SaveAll(), Times.Once);
     }
 }
