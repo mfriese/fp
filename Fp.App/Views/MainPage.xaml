@@ -58,10 +58,12 @@
                             RowDefinitions="*, *">
                             <Label
                                 Grid.Row="0"
+                                TextColor="Black"
                                 Text="{Binding Header}"
                                 FontAttributes="Bold" />
                             <Label
                                 Grid.Row="1"
+                                TextColor="Black"
                                 Text="{Binding Description}"
                                 FontSize="Small" />
                             <Ellipse

@@ -43,11 +43,14 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-
-        <EmbeddedResource Include="settings.json" />
 	</ItemGroup>
 
-	<ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="settings.Debug.json" Link="settings.json" Condition="'$(Configuration)' == 'Debug'" />
+        <EmbeddedResource Include="settings.Release.json" Link="settings.json" Condition="'$(Configuration)' == 'Release'" />
+    </ItemGroup>
+
+    <ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="12.0.0" />
 		<PackageReference Include="CommunityToolkit.MVVM" Version="8.4.0" />
 		<PackageReference Include="DynamicData" Version="9.4.1" />
