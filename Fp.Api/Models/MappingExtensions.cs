@@ -25,8 +25,8 @@ public static class MappingExtensions
         if (dto.IsCompleted is not null)
             model.IsCompleted = dto.IsCompleted.Value;
 
-        if (dto.Title is not null)
-            model.Header = dto.Title;
+        if (dto.Header is not null)
+            model.Header = dto.Header;
 
         if (dto.Description is not null)
             model.Description = dto.Description;

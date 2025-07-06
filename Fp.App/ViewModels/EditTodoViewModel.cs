@@ -44,7 +44,7 @@ public partial class EditTodoViewModel(ITodoService todoService) : BaseViewModel
     {
         var updateRequest = new UpdateTodoModel()
         {
-            Title = model.Header,
+            Header = model.Header,
             Description = model.Description,
             IsCompleted = model.IsCompleted
         };

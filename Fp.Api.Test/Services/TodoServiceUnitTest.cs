@@ -28,7 +28,7 @@ public class TodoServiceUnitTest
         var result = service.Update(42, new()
         {
             IsCompleted = true,
-            Title = "my new title",
+            Header = "my new title",
             Description = "my new description"
         });
 
@@ -44,7 +44,7 @@ public class TodoServiceUnitTest
         var update = new UpdateTodoRequest()
         {
             IsCompleted = true,
-            Title = "my new title",
+            Header = "my new title",
             Description = "my new description"
         };
 
@@ -61,7 +61,7 @@ public class TodoServiceUnitTest
         var result = service.Update(sample.Id, update);
 
         Assert.True(result);
-        Assert.Equal(update.Title, sample.Header);
+        Assert.Equal(update.Header, sample.Header);
         Assert.Equal(update.Description, sample.Description);
         Assert.Equal(update.IsCompleted, sample.IsCompleted);
         uowMock.Verify(u => u.SaveAll(), Times.Once);

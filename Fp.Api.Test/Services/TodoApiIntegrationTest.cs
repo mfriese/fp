@@ -62,7 +62,7 @@ public class TodoApiIntegrationTest(TestWebApplicationFactory factory) :
 
         var updateDto = new UpdateTodoRequest
         {
-            Title = "Updated title",
+            Header = "Updated title",
             Description = "Updated description",
             IsCompleted = true
         };
