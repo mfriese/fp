@@ -7,6 +7,23 @@ demonstriert moderne .NET-Praktiken wie Dependency Injection, IObservable-Reakti
 Integrationstests mit `WebApplicationFactory`, strukturierte Logs und eine klare Trennung von
 API, Service und Datenzugriff.
 
+<!-- TOC -->
+- [Todo App (MAUI + Minimal API Backend)](#todo-app-maui--minimal-api-backend)
+  - [Projektstruktur](#projektstruktur)
+  - [Features](#features)
+  - [Architektur](#architektur)
+    - [Backend (Minimal API)](#backend-minimal-api)
+    - [Frontend (MAUI)](#frontend-maui)
+  - [Teststrategie](#teststrategie)
+  - [Setup \& Start](#setup--start)
+    - [Voraussetzungen](#voraussetzungen)
+    - [Start der Anwendung](#start-der-anwendung)
+      - [**Debug** Start mit **Emulator**](#debug-start-mit-emulator)
+      - [**Release** Start mit **Smartphone**](#release-start-mit-smartphone)
+    - [API-Dokumentation](#api-dokumentation)
+  - [📁 Verzeichnisstruktur](#-verzeichnisstruktur)
+<!-- /TOC -->
+
 ## Projektstruktur
 
 ```text
@@ -72,30 +89,57 @@ Android-Emulator kann das Backend nur über `http://10.0.2.2:5000` erreicht werd
 
 **Ausführen (aus Visual Studio):**
 
-In der App gibt es zwei separate Config Dateien. Die **Debug** Config ist für lokales
-Starten mit Emulator gedacht. Die **Release** Config ist für Start auf einem Smartphone
-gedacht, hier muss die IP der Computers eingetrasgen werden auf dem das Backend läuft.
+Der Einfachheit halber sollte die Anwendung aus Visual Studio heraus gestartet werden.
+In der App gibt es zwei separate Config Dateien:
 
-Option 1) Debug start aus Visual Studio heraus auf **Emulator**:
+```text
+/Fp.App/settings.Debug.json
+/Fp.App/settings.Release.json
+```
 
-* Solution Fp.Api.sln in Visual Studio öffnen
-* Konfiguration: **Debug**.
-* Geräteauswahl: Einen Android Emulator auswählen (Start Dropdown > Android Emulators).
-* Backend läuft auf: `http://localhost:5000`
-* App versucht auf `http://10.0.2.2:5000` zuzugriefen, hier läuft das Backend.
-* **Start** klicken
+Die **settings.Debug.json** Datei ist für lokalen Start mit Emulator gedacht. Die
+**settings.Release.json** ist für dem Start mit einem Smartphone gedacht. Es muss
+in der Relase config allerdings die IP Adresse des Computer hinterlegt werden, auf
+dem das Backend läuft.
 
-Option 2) Release start aus Visual Studio heraus auf echtem Gerät:
+#### **Debug** Start mit **Emulator**
 
-* Solution Fp.Api.sln in Visual Studio öffnen
-* Konfiguration: **Release**.
-* Geräteauswahl: Einen Lokales Gerät auswählen (Start Dropdown > Android Local Devices).
-* Backend läuft auf: `http://localhost:5000`
-* Datei `settings.Release.json` so anpassen, dass die IP des Computers, auf dem das
-  Backend gestartet wird eintragen. Z.B. per `ipconfig` aus der Kommandozeile abfragen
+1) Solution Fp.Api.sln in Visual Studio öffnen.
+1) Per **Rechtsklick** die **Properties** der **Solution** öffnen.
+1) Unter **Common Properties** > **Configure Startup Projects** folgende Einstellungen
+  vornehmen:
+     * **Project**: Fp.Api -> **Action**: Start without debugging -> **Debug Target**: run in console
+     * **Project**: Fp.App -> **Action**: Start -> **Debug Target**: [eingerichteter Android Emulator]
+     * Dialog schließen.
+1) Die Solution Configuration auf **Debug** stellen.
+1) Backend läuft auf `http://localhost:5000` und die App kontaktiert es über die Adresse
+  `http://10.0.2.2:5000`. Unter dieser Adresse verbirgt sich der localhost des Host-Rechners
+  (nur im Emulator).
+1) **Start** klicken
+
+#### **Release** Start mit **Smartphone**
+
+1) Solution Fp.Api.sln in Visual Studio öffnen.
+1) Per **Rechtsklick** die **Properties** der **Solution** öffnen.
+1) Unter **Common Properties** > **Configure Startup Projects** folgende Einstellungen
+  vornehmen:
+     * **Project**: Fp.Api -> **Action**: Start without debugging -> **Debug Target**: run in console
+     * **Project**: Fp.App -> **Action**: Start without debugging -> **Debug Target**: [eingerichtetes
+       Android Gerät]*1
+     * Dialog schließen.
+1) Die Solution Configuration auf **Release** stellen.
+1) Backend läuft auf: `http://localhost:5000`
+1) Datei `settings.Release.json` so anpassen, dass die IP des Computers, auf dem das
+  Backend gestartet wird, eingetragen ist. Z.B. per `ipconfig` in der Kommandozeile abfragen
   und die IP des lokalen Netzwerkgeräts identifizieren. Die IP aus der json entsprechend
   ersetzen.
-* App versucht auf `http://10.0.2.2:5000` zuzugriefen, hier läuft das Backend.
+1) **Achtung** Damit die App auf den Port zugreifen kann muss er in der Windows Firewall freigegeben
+   werden! Windows Defender Firewall starten > Eingehende Regeln wählen > Aktion > Neue Regel > Port
+   5000 freigeben.
+1) **Start** klicken
+
+*1 Wird das Gerät nicht angezeigt Dialog schließen und stattdessen über die Debug-Leiste das Gerät
+aus der Liste wählen (Dropdown am Startbutton -> Android Local Devices).
 
 ### API-Dokumentation
 
